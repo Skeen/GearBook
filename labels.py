@@ -121,4 +121,4 @@ for row in range(rows):
         
     pdf.set_y(pdf.get_y() + cell_height)
 
-pdf.output('tuto1.pdf', 'F')
+pdf.output('out.pdf', 'F')
