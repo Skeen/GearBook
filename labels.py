@@ -8,6 +8,7 @@ import qrcode
 # Constants
 mm2pt = 72/25.4
 logo_filename = 'logo.png'
+make_grid = False
 
 # Dimensions of our paper (A4)
 paper_height = 297
@@ -18,8 +19,8 @@ paper_width = 210
 columns = 5
 rows = 13
 # Size of each label / cell
-cell_height = 21.2
-cell_width = 38
+cell_height = 21.2 + 0.8
+cell_width = 38.0 + 1.25
 
 ## Number of columns / rows
 #columns = 3
@@ -116,7 +117,8 @@ for row in range(rows):
             y=pdf.get_y()+cell_height-image_border,
             txt=str(cell_id)
         )
-        pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=cell_width, h=cell_height)
+        if make_grid:
+            pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=cell_width, h=cell_height)
         pdf.set_x(pdf.get_x() + cell_width)
         
     pdf.set_y(pdf.get_y() + cell_height)

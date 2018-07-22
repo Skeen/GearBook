@@ -1,2 +1,5 @@
 img/*
+*.swo
+*.swp
+*~
 out.pdf
