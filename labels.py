@@ -9,6 +9,10 @@ import qrcode
 mm2pt = 72/25.4
 logo_filename = 'logo.png'
 make_grid = False
+base_url = 'http://ralph.atlas.magenta.dk/item/'
+
+# Pages
+pages = 2
 
 # Dimensions of our paper (A4)
 paper_height = 297
@@ -54,7 +58,6 @@ image_border = max_dimension/10
 # Open our PDF document
 pdf = FPDF()
 pdf.set_margins(left=margin_left, top=margin_top)
-pdf.add_page()
 
 # Figure out our font-size
 # We need to know the format of our logo
@@ -76,51 +79,54 @@ for size in range(int(height_left*mm2pt)):
     if width > logo_width:
         break
     pdf.set_font('Arial', '', size)
+pdf.set_text_color(r=0, g=0, b=0)
 
 image_folder = 'img/'
 if not os.path.exists(image_folder):
     os.makedirs(image_folder)
 
-pdf.set_y(margin_top)
-for row in range(rows):
-    pdf.set_x(margin_left)
-    print "new row"
-    for column in range(columns):
-        cell_id = start_id + (column + row*columns)
-        qr_filename = image_folder + str(cell_id) + ".png"
-        url = 'http://ralph.atlas.magenta.dk/item/' + str(cell_id)
-        # Generate QR CODE
-        img = qrcode.make(url, border=0)
-        img.save(qr_filename, "PNG")
-        # Write in our QR code
-        pdf.image(
-            x=pdf.get_x()+image_border, 
-            y=pdf.get_y()+image_border,
-            w=max_dimension-image_border*2, 
-            h=max_dimension-image_border*2, 
-            name=qr_filename, 
-            link=url,
-        )
-        # Add the logo
-        pdf.image(
-            x=pdf.get_x()+max_dimension, 
-            y=pdf.get_y()+image_border,
-            w=logo_width,
-            h=logo_height,
-            name=logo_filename,
-        )
-        # Print the id
-        pdf.text(
-            # Place centered under the logo (only center with max_digits)
-            x=pdf.get_x()+max_dimension+logo_width/2-width/2,
-            # Place on the bottom of the cell minus one border
-            y=pdf.get_y()+cell_height-image_border,
-            txt=str(cell_id)
-        )
-        if make_grid:
-            pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=cell_width, h=cell_height)
-        pdf.set_x(pdf.get_x() + cell_width)
-        
-    pdf.set_y(pdf.get_y() + cell_height)
+for page in range(pages):
+    pdf.add_page()
+    pdf.set_y(margin_top)
+    for row in range(rows):
+        pdf.set_x(margin_left)
+        for column in range(columns):
+            cell_id = start_id + (column + row*columns)
+            qr_filename = image_folder + str(cell_id) + ".png"
+            url = base_url + str(cell_id)
+            # Generate QR CODE
+            img = qrcode.make(url, border=0)
+            img.save(qr_filename, "PNG")
+            # Write in our QR code
+            pdf.image(
+                x=pdf.get_x()+image_border, 
+                y=pdf.get_y()+image_border,
+                w=max_dimension-image_border*2, 
+                h=max_dimension-image_border*2, 
+                name=qr_filename, 
+                link=url,
+            )
+            # Add the logo
+            pdf.image(
+                x=pdf.get_x()+max_dimension, 
+                y=pdf.get_y()+image_border,
+                w=logo_width,
+                h=logo_height,
+                name=logo_filename,
+            )
+            # Print the id
+            pdf.text(
+                # Place centered under the logo (only center with max_digits)
+                x=pdf.get_x()+max_dimension+logo_width/2-width/2,
+                # Place on the bottom of the cell minus one border
+                y=pdf.get_y()+cell_height-image_border,
+                txt=str(cell_id)
+            )
+            if make_grid:
+                pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=cell_width, h=cell_height)
+            pdf.set_x(pdf.get_x() + cell_width)
+            
+        pdf.set_y(pdf.get_y() + cell_height)
+    start_id += rows*columns
 
 pdf.output('out.pdf', 'F')
