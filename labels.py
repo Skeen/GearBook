@@ -9,7 +9,7 @@ import qrcode
 mm2pt = 72/25.4
 logo_filename = 'logo.png'
 make_grid = False
-base_url = 'http://ralph.atlas.magenta.dk/item/'
+base_url = 'https://qralph.skeen.dk/hardware-qr/'
 
 # Pages
 pages = 2
@@ -66,7 +66,7 @@ with Image.open(logo_filename) as img:
     width, height = img.size
     logo_ratio = float(height)/width
 # Calculate the logo size
-logo_width = cell_width-max_dimension-image_border
+logo_width = cell_width-max_dimension-image_border*0.75
 logo_height = logo_width*logo_ratio
 # Calculate how much space will be left under the logo
 height_left = cell_height - logo_height - image_border
